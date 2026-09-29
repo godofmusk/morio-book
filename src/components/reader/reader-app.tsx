@@ -94,6 +94,7 @@ function ReaderShell() {
   const pdfSource = useSettings((s) => s.pdfSource);
   const uploadName = useSettings((s) => s.uploadName);
   const history = useSettings((s) => s.history);
+  const translationProviders = useSettings((s) => s.translationProviders);
   const setTheme = useSettings((s) => s.setTheme);
   const setPage = useSettings((s) => s.setPage);
   const setZoom = useSettings((s) => s.setZoom);
@@ -236,9 +237,10 @@ function ReaderShell() {
           data: {
             text: payload.text,
             sourceLang,
-            targetLang,
-          },
-        });
+    targetLang,
+    providers: translationProviders,
+  },
+});
         if (!res.ok) {
           setError(res.error);
           return;
@@ -895,6 +897,9 @@ function SettingsDialog({
   const theme = useSettings((s) => s.theme);
   const pdfDarkMode = useSettings((s) => s.pdfDarkMode);
   const zoom = useSettings((s) => s.zoom);
+  const translationProviders = useSettings((s) => s.translationProviders);
+  const setTranslationProviderEnabled = useSettings((s) => s.setTranslationProviderEnabled);
+  const moveTranslationProvider = useSettings((s) => s.moveTranslationProvider);
   const setSourceLang = useSettings((s) => s.setSourceLang);
   const setTargetLang = useSettings((s) => s.setTargetLang);
   const setMode = useSettings((s) => s.setMode);
@@ -952,6 +957,29 @@ function SettingsDialog({
                   body="Translation appears in a small window beside the selection."
                   onClick={() => setMode("float")}
                 />
+              </div>
+            </section>
+
+            <section className="space-y-3">
+              <div>
+                <h3 className="text-xs font-medium text-muted">Translation services</h3>
+                <p className="mt-1 text-[11px] text-subtle">Services are tried from top to bottom. Disabled services are skipped.</p>
+              </div>
+              <div className="space-y-2">
+                {translationProviders.map((provider, index) => {
+                  const label = provider.id === "google" ? "Google Translate" : provider.id === "mymemory" ? "MyMemory" : "Lingva Translate";
+                  return (
+                    <div key={provider.id} className="flex items-center gap-2 rounded-xl bg-bg px-3 py-2.5 shadow-[var(--shadow-border)]">
+                      <div className="flex min-w-0 flex-1 items-center gap-2">
+                        <span className="w-5 text-center text-xs tabular-nums text-subtle">{index + 1}</span>
+                        <span className="truncate text-sm">{label}</span>
+                      </div>
+                      <button type="button" className="rounded-md p-1.5 text-muted hover:bg-fg/8 hover:text-fg disabled:opacity-30" onClick={() => moveTranslationProvider(provider.id, "up")} disabled={index === 0} aria-label={`Move ${label} up`}>↑</button>
+                      <button type="button" className="rounded-md p-1.5 text-muted hover:bg-fg/8 hover:text-fg disabled:opacity-30" onClick={() => moveTranslationProvider(provider.id, "down")} disabled={index === translationProviders.length - 1} aria-label={`Move ${label} down`}>↓</button>
+                      <Switch checked={provider.enabled} onCheckedChange={(enabled) => setTranslationProviderEnabled(provider.id, enabled)} aria-label={`Enable ${label}`} />
+                    </div>
+                  );
+                })}
               </div>
             </section>
 

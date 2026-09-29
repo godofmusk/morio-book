@@ -1,5 +1,10 @@
 import { createServerFn } from "@tanstack/react-start";
 import { languageLabel } from "./languages";
+import {
+  DEFAULT_TRANSLATION_PROVIDERS,
+  type TranslationProviderId,
+  type TranslationProviderSetting,
+} from "./store";
 
 export type TranslateResult =
   | { ok: true; text: string; detected?: string }
@@ -9,6 +14,7 @@ type TranslateInput = {
   text: string;
   sourceLang: string;
   targetLang: string;
+  providers?: TranslationProviderSetting[];
 };
 
 type ImageTranslateInput = {
@@ -63,46 +69,47 @@ function sanitizeInput(input: unknown): TranslateInput {
   };
 }
 
-async function translateWithGrok(input: TranslateInput): Promise<string | null> {
-  const apiKey = process.env.XAI_API_KEY;
-  if (!apiKey) return null;
+type ProviderResult = { text: string; detected?: string };
 
-  const source =
-    input.sourceLang === "auto"
-      ? "the detected source language"
-      : languageLabel(input.sourceLang);
-  const target = languageLabel(input.targetLang);
-
-  const res = await fetch("https://api.x.ai/v1/chat/completions", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${apiKey}`,
-    },
-    body: JSON.stringify({
-      model: "grok-4.5",
-      temperature: 0.15,
-      max_tokens: Math.min(1800, Math.max(256, input.text.length * 2)),
-      messages: [
-        {
-          role: "system",
-          content:
-            "You are a precise literary translator. Return only the translation. Preserve paragraph breaks and punctuation. Do not add quotes, labels, or commentary. If the text is already in the target language, return it unchanged.",
-        },
-        {
-          role: "user",
-          content: `Translate from ${source} to ${target}:\n\n${input.text}`,
-        },
-      ],
-    }),
-  });
-
+async function translateWithMyMemory(input: TranslateInput): Promise<ProviderResult | null> {
+  const url = new URL("https://api.mymemory.translated.net/get");
+  url.searchParams.set("q", input.text);
+  url.searchParams.set("langpair", `${input.sourceLang === "auto" ? "autodetect" : input.sourceLang}|${input.targetLang}`);
+  const res = await fetch(url.toString());
   if (!res.ok) return null;
-  const body = (await res.json()) as {
-    choices?: { message?: { content?: string } }[];
-  };
-  const text = body.choices?.[0]?.message?.content?.trim();
-  return text || null;
+  const body = (await res.json()) as { responseStatus?: number; responseData?: { translatedText?: string } };
+  if (body.responseStatus !== 200) return null;
+  const text = body.responseData?.translatedText?.trim();
+  return text ? { text } : null;
+}
+
+async function translateWithLingva(input: TranslateInput): Promise<ProviderResult | null> {
+  const source = input.sourceLang === "auto" ? "auto" : input.sourceLang;
+  const url = `https://lingva.ml/api/v1/${encodeURIComponent(source)}/${encodeURIComponent(input.targetLang)}/${encodeURIComponent(input.text)}`;
+  const res = await fetch(url);
+  if (!res.ok) return null;
+  const body = (await res.json()) as { translation?: string };
+  const text = body.translation?.trim();
+  return text ? { text } : null;
+}
+
+async function translateWithProvider(id: TranslationProviderId, input: TranslateInput): Promise<ProviderResult | null> {
+  if (id === "google") return translateWithGoogle(input);
+  if (id === "mymemory") return translateWithMyMemory(input);
+  return translateWithLingva(input);
+}
+
+async function translateWithProviders(input: TranslateInput, settings: TranslationProviderSetting[] = DEFAULT_TRANSLATION_PROVIDERS): Promise<ProviderResult | null> {
+  for (const provider of settings) {
+    if (!provider.enabled) continue;
+    try {
+      const result = await translateWithProvider(provider.id, input);
+      if (result) return result;
+    } catch {
+      // Continue to the next provider when a public endpoint is unavailable.
+    }
+  }
+  return null;
 }
 
 async function translateWithGoogle(
@@ -135,18 +142,12 @@ export const translateImage = createServerFn({ method: "POST" })
     try {
       const text = await extractTextFromImage(data);
       if (!text) return { ok: false, error: "متنی از تصویر صفحه خوانده نشد" };
-      const translated = await translateWithGoogle({
+      const translated = await translateWithProviders({
         text,
         sourceLang: data.sourceLang,
         targetLang: data.targetLang,
       });
       if (translated) return { ok: true, text: translated.text, detected: translated.detected };
-      const grok = await translateWithGrok({
-        text,
-        sourceLang: data.sourceLang,
-        targetLang: data.targetLang,
-      });
-      if (grok) return { ok: true, text: grok };
       return { ok: false, error: "ترجمه در حال حاضر در دسترس نیست" };
     } catch {
       return { ok: false, error: "خطا در خواندن یا ترجمه تصویر صفحه" };
@@ -157,11 +158,8 @@ export const translateText = createServerFn({ method: "POST" })
   .validator(sanitizeInput)
   .handler(async ({ data }): Promise<TranslateResult> => {
     try {
-      const grok = await translateWithGrok(data);
-      if (grok) return { ok: true, text: grok };
-
-      const google = await translateWithGoogle(data);
-      if (google) return { ok: true, text: google.text, detected: google.detected };
+      const translated = await translateWithProviders(data, data.providers);
+      if (translated) return { ok: true, text: translated.text, detected: translated.detected };
 
       return { ok: false, error: "ترجمه در حال حاضر در دسترس نیست" };
     } catch {

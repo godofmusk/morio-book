@@ -3,6 +3,18 @@ import { persist } from "zustand/middleware";
 
 export type TranslateMode = "split" | "replace" | "float";
 export type ThemeMode = "system" | "light" | "dark";
+export type TranslationProviderId = "google" | "mymemory" | "lingva";
+
+export type TranslationProviderSetting = {
+  id: TranslationProviderId;
+  enabled: boolean;
+};
+
+export const DEFAULT_TRANSLATION_PROVIDERS: TranslationProviderSetting[] = [
+  { id: "google", enabled: true },
+  { id: "mymemory", enabled: true },
+  { id: "lingva", enabled: true },
+];
 
 export type HistoryItem = {
   id: string;
@@ -26,6 +38,7 @@ type SettingsState = {
   pdfSource: "default" | "upload";
   uploadName: string;
   history: HistoryItem[];
+  translationProviders: TranslationProviderSetting[];
   setTheme: (theme: ThemeMode) => void;
   setSourceLang: (code: string) => void;
   setTargetLang: (code: string) => void;
@@ -36,6 +49,8 @@ type SettingsState = {
   setPage: (page: number) => void;
   setZoom: (zoom: number) => void;
   setPdfSource: (source: "default" | "upload", name?: string) => void;
+  setTranslationProviderEnabled: (id: TranslationProviderId, enabled: boolean) => void;
+  moveTranslationProvider: (id: TranslationProviderId, direction: "up" | "down") => void;
   addHistory: (item: Omit<HistoryItem, "id" | "ts">) => void;
   clearHistory: () => void;
 };
@@ -57,6 +72,7 @@ export const useSettings = create<SettingsState>()(
       pdfSource: "default",
       uploadName: "",
       history: [],
+      translationProviders: DEFAULT_TRANSLATION_PROVIDERS,
       setTheme: (theme) => set({ theme }),
       setSourceLang: (sourceLang) => set({ sourceLang }),
       setTargetLang: (targetLang) => set({ targetLang }),
@@ -71,6 +87,21 @@ export const useSettings = create<SettingsState>()(
           pdfSource,
           uploadName: pdfSource === "upload" ? (name ?? "") : "",
           page: 1,
+        }),
+      setTranslationProviderEnabled: (id, enabled) =>
+        set((state) => ({
+          translationProviders: state.translationProviders.map((provider) =>
+            provider.id === id ? { ...provider, enabled } : provider,
+          ),
+        })),
+      moveTranslationProvider: (id, direction) =>
+        set((state) => {
+          const index = state.translationProviders.findIndex((provider) => provider.id === id);
+          const nextIndex = direction === "up" ? index - 1 : index + 1;
+          if (index < 0 || nextIndex < 0 || nextIndex >= state.translationProviders.length) return state;
+          const translationProviders = [...state.translationProviders];
+          [translationProviders[index], translationProviders[nextIndex]] = [translationProviders[nextIndex], translationProviders[index]];
+          return { translationProviders };
         }),
       addHistory: (item) =>
         set((state) => ({
@@ -100,6 +131,7 @@ export const useSettings = create<SettingsState>()(
         pdfSource: state.pdfSource,
         uploadName: state.uploadName,
         history: state.history.slice(0, 12),
+        translationProviders: state.translationProviders,
       }),
     },
   ),
