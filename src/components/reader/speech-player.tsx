@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { Pause, Play, SkipBack, SkipForward, X } from "lucide-react";
+import { LoaderCircle, Pause, Play, SkipBack, SkipForward, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { synthesizeSpeech } from "@/lib/edge-tts";
 
@@ -13,6 +13,7 @@ export function SpeechPlayer({ text, label, lang, onClose }: Props) {
   const [elapsed, setElapsed] = useState(0);
   const [playing, setPlaying] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [shortAudio, setShortAudio] = useState(false);
 
   useEffect(() => {
     let active = true;
@@ -20,6 +21,7 @@ export function SpeechPlayer({ text, label, lang, onClose }: Props) {
     setDuration(0);
     setElapsed(0);
     setPlaying(false);
+    setShortAudio(false);
     setError(null);
     void synthesizeSpeech({ data: { text, language: lang === "auto" ? "en" : lang } }).then((result) => {
       if (!active) return;
@@ -37,12 +39,16 @@ export function SpeechPlayer({ text, label, lang, onClose }: Props) {
     const audio = audioRef.current;
     if (!audio || !Number.isFinite(audio.duration)) return;
     setDuration(audio.duration);
-    if (audio.duration <= 10) { onClose(); return; }
+    setShortAudio(audio.duration <= 10);
     void audio.play().then(() => setPlaying(true)).catch(() => setPlaying(false));
   };
   const handleEnded = () => {
     setPlaying(false);
     setElapsed(duration);
+    if (shortAudio) {
+      onClose();
+      return;
+    }
     closeTimerRef.current = window.setTimeout(onClose, 10_000);
   };
   const toggle = () => {
@@ -53,7 +59,14 @@ export function SpeechPlayer({ text, label, lang, onClose }: Props) {
   const seek = (value: number) => { if (audioRef.current) audioRef.current.currentTime = value; setElapsed(value); };
 
   if (error) return null;
-  if (!audioUrl) return null;
+  if (!audioUrl) {
+    return (
+      <div data-translation-ui="" className="fixed bottom-4 left-1/2 z-[55] flex -translate-x-1/2 items-center gap-2 rounded-full border border-white/15 bg-[var(--header)]/95 px-4 py-2 text-xs text-white shadow-[var(--shadow-float)] backdrop-blur-xl" role="status" aria-live="polite">
+        <LoaderCircle className="size-4 animate-spin" />
+        <span>در حال آماده‌سازی صدا…</span>
+      </div>
+    );
+  }
   return (
     <>
       <audio ref={audioRef} src={audioUrl} onLoadedMetadata={handleLoaded} onTimeUpdate={() => setElapsed(audioRef.current?.currentTime ?? 0)} onEnded={handleEnded} onError={() => setError("پخش صوتی در دسترس نیست.")} preload="auto" />

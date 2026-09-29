@@ -553,7 +553,7 @@ function ReaderShell() {
           <Button variant="ghost" size="icon-sm" aria-label="Run OCR" disabled={!pageImage || ocrLoading} onClick={() => void runOcr()}>
             {ocrLoading ? <LoaderCircle className="size-4 animate-spin" /> : <ScanText className="size-4" />}
           </Button>
-          <Button variant="ghost" size="icon-sm" aria-label="Read whole page" onClick={() => speakText((translatedPageText && translatedPageText.trim()) || pageBlocks.map((block) => block.text).join("\n\n") || pageText, "Whole page", sourceLang)}>
+          <Button variant="ghost" size="icon-sm" aria-label="Read whole page" onClick={() => speakText((translatedPageText && translatedPageText.trim()) || pageBlocks.map((block) => block.text).join("\n\n") || pageText, "Whole page", translatedPageText ? targetLang : sourceLang)}>
             <Volume2 className="size-4" />
           </Button>
           <Button

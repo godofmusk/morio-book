@@ -61,7 +61,7 @@ export const useSettings = create<SettingsState>()(
   persist(
     (set) => ({
       theme: "system",
-      sourceLang: "auto",
+      sourceLang: "en",
       targetLang: "fa",
       mode: "split",
       autoTranslate: false,
@@ -118,6 +118,14 @@ export const useSettings = create<SettingsState>()(
     }),
     {
       name: "tarjomaan-settings",
+      merge: (persistedState, currentState) => {
+        const state = persistedState as Partial<SettingsState>;
+        return {
+          ...currentState,
+          ...state,
+          sourceLang: state.sourceLang === "auto" || !state.sourceLang ? "en" : state.sourceLang,
+        };
+      },
       partialize: (state) => ({
         theme: state.theme,
         sourceLang: state.sourceLang,
