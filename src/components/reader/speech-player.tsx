@@ -53,17 +53,21 @@ export function SpeechPlayer({ text, label, lang, onClose }: Props) {
   const seek = (value: number) => { if (audioRef.current) audioRef.current.currentTime = value; setElapsed(value); };
 
   if (error) return null;
-  if (!audioUrl || duration <= 10) return null;
+  if (!audioUrl) return null;
   return (
-    <div data-translation-ui="" className="fixed inset-x-1/2 bottom-4 z-[55] flex w-[min(94vw,40rem)] -translate-x-1/2 items-center gap-2 rounded-2xl border border-white/15 bg-[var(--header)]/95 px-3 py-2 text-white shadow-[var(--shadow-float)] backdrop-blur-xl" dir="ltr">
+    <>
       <audio ref={audioRef} src={audioUrl} onLoadedMetadata={handleLoaded} onTimeUpdate={() => setElapsed(audioRef.current?.currentTime ?? 0)} onEnded={handleEnded} onError={() => setError("پخش صوتی در دسترس نیست.")} preload="auto" />
-      <Button variant="ghost" size="icon-sm" aria-label="Rewind" onClick={() => seek(Math.max(0, elapsed - 5))}><SkipBack className="size-4" /></Button>
-      <Button variant="ghost" size="icon-sm" aria-label={playing ? "Pause" : "Play"} onClick={toggle}>{playing ? <Pause className="size-4" /> : <Play className="size-4" />}</Button>
-      <input aria-label={`${label} playback position`} className="min-w-0 flex-1 accent-[var(--accent)]" type="range" min={0} max={duration} step={0.1} value={elapsed} onChange={(event) => seek(Number(event.target.value))} />
-      <span className="w-20 text-center text-[11px] tabular-nums text-white/70">{Math.floor(elapsed)}s / {Math.floor(duration)}s</span>
-      <Button variant="ghost" size="icon-sm" aria-label="Forward" onClick={() => seek(Math.min(duration, elapsed + 5))}><SkipForward className="size-4" /></Button>
-      <Button variant="ghost" size="icon-sm" aria-label="Close player" onClick={onClose}><X className="size-4" /></Button>
-    </div>
+      {duration > 10 && (
+        <div data-translation-ui="" className="fixed inset-x-1/2 bottom-4 z-[55] flex w-[min(94vw,40rem)] -translate-x-1/2 items-center gap-2 rounded-2xl border border-white/15 bg-[var(--header)]/95 px-3 py-2 text-white shadow-[var(--shadow-float)] backdrop-blur-xl" dir="ltr">
+          <Button variant="ghost" size="icon-sm" aria-label="Rewind" onClick={() => seek(Math.max(0, elapsed - 5))}><SkipBack className="size-4" /></Button>
+          <Button variant="ghost" size="icon-sm" aria-label={playing ? "Pause" : "Play"} onClick={toggle}>{playing ? <Pause className="size-4" /> : <Play className="size-4" />}</Button>
+          <input aria-label={`${label} playback position`} className="min-w-0 flex-1 accent-[var(--accent)]" type="range" min={0} max={duration} step={0.1} value={elapsed} onChange={(event) => seek(Number(event.target.value))} />
+          <span className="w-20 text-center text-[11px] tabular-nums text-white/70">{Math.floor(elapsed)}s / {Math.floor(duration)}s</span>
+          <Button variant="ghost" size="icon-sm" aria-label="Forward" onClick={() => seek(Math.min(duration, elapsed + 5))}><SkipForward className="size-4" /></Button>
+          <Button variant="ghost" size="icon-sm" aria-label="Close player" onClick={onClose}><X className="size-4" /></Button>
+        </div>
+      )}
+    </>
   );
 }
 
