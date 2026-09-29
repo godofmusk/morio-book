@@ -4,7 +4,6 @@ export type Language = {
 };
 
 export const SOURCE_LANGUAGES: Language[] = [
-  { code: "auto", label: "تشخیص خودکار" },
   { code: "en", label: "انگلیسی" },
   { code: "fa", label: "فارسی" },
   { code: "ar", label: "عربی" },
