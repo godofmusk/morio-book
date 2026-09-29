@@ -153,13 +153,11 @@ function ReaderShell() {
   const translatingFor = useRef<string | null>(null);
   const [speechText, setSpeechText] = useState<{ text: string; label: string; lang: string } | null>(null);
   const stopSpeech = useCallback(() => {
-    window.speechSynthesis?.cancel();
     setSpeechText(null);
   }, []);
   const speakText = useCallback((text: string, label: string, lang: string) => {
     const clean = text.trim();
     if (!clean) return;
-    window.speechSynthesis?.cancel();
     setSpeechText({ text: clean, label, lang });
   }, []);
   useEffect(() => {
