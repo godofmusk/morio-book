@@ -1,0 +1,357 @@
+@import url("https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;700&display=swap");
+@import "tailwindcss";
+
+@font-face {
+  font-family: "Morio Sans";
+  src: url("/standard_fonts/LiberationSans-Regular.ttf") format("truetype");
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Morio Sans";
+  src: url("/standard_fonts/LiberationSans-Bold.ttf") format("truetype");
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+}
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+:root {
+  --bg: #f3efe6;
+  --bg-elevated: #faf7f1;
+  --bg-subtle: #e7e0d4;
+  --fg: #1a1714;
+  --muted: #6b645b;
+  --subtle: #8c847a;
+  --accent: #1688e8;
+  --accent-fg: #f7f4ee;
+  --border: color-mix(in oklab, var(--fg) 12%, transparent);
+  --paper: #fffdf8;
+  --shadow-border:
+    0 0 0 1px rgba(26, 23, 20, 0.07),
+    0 1px 2px -1px rgba(26, 23, 20, 0.06),
+    0 2px 4px 0 rgba(26, 23, 20, 0.04);
+  --shadow-page:
+    0 0 0 1px rgba(26, 23, 20, 0.06),
+    0 18px 40px -24px rgba(26, 23, 20, 0.35);
+  --shadow-float:
+    0 0 0 1px rgba(26, 23, 20, 0.08),
+    0 12px 32px -12px rgba(26, 23, 20, 0.28);
+  --radius-xs: 4px;
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --font-sans: "Morio Sans", "Segoe UI", Arial, sans-serif;
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+  --header: #1688e8;
+  --header-fg: #ffffff;
+  --window-control-fg: #1a1714;
+  --scroll-thumb: color-mix(in srgb, var(--accent) 38%, var(--bg-elevated));
+  --scroll-track: color-mix(in srgb, var(--bg) 82%, transparent);
+}
+
+.dark {
+  --header: #08253f;
+  --header-fg: #ffffff;
+  --window-control-fg: #4eb6ff;
+  --bg: #12110f;
+  --bg-elevated: #1c1a17;
+  --bg-subtle: #0e0d0c;
+  --fg: #ece8e0;
+  --muted: #a39b90;
+  --subtle: #7d766c;
+  --accent: #4eb6ff;
+  --accent-fg: #12110f;
+  --border: color-mix(in oklab, var(--fg) 14%, transparent);
+  --paper: #1a1814;
+  --shadow-border: 0 0 0 1px rgba(255, 255, 255, 0.08);
+  --shadow-page:
+    0 0 0 1px rgba(255, 255, 255, 0.06),
+    0 18px 40px -24px rgba(0, 0, 0, 0.55);
+  --shadow-float:
+    0 0 0 1px rgba(255, 255, 255, 0.1),
+    0 16px 40px -16px rgba(0, 0, 0, 0.6);
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-elevated: var(--bg-elevated);
+  --color-bg-subtle: var(--bg-subtle);
+  --color-fg: var(--fg);
+  --color-muted: var(--muted);
+  --color-subtle: var(--subtle);
+  --color-accent: var(--accent);
+  --color-accent-fg: var(--accent-fg);
+  --color-border: var(--border);
+  --color-paper: var(--paper);
+  --font-sans: var(--font-sans);
+  --radius-sm: var(--radius-sm);
+  --radius-md: var(--radius-md);
+  --radius-lg: var(--radius-lg);
+}
+
+.glass-root {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+}
+
+.glass-backdrop {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at 12% 8%, color-mix(in srgb, var(--accent) 22%, transparent), transparent 32%),
+    radial-gradient(circle at 88% 18%, color-mix(in srgb, var(--muted) 28%, transparent), transparent 30%),
+    linear-gradient(135deg, var(--bg), color-mix(in srgb, var(--bg-subtle) 78%, var(--accent)));
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--scroll-thumb) var(--scroll-track);
+}
+
+*::-webkit-scrollbar {
+  width: 9px;
+  height: 9px;
+}
+
+*::-webkit-scrollbar-track {
+  background: var(--scroll-track);
+}
+
+*::-webkit-scrollbar-thumb {
+  border: 2px solid transparent;
+  border-radius: 999px;
+  background: var(--scroll-thumb);
+  background-clip: padding-box;
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  background: color-mix(in srgb, var(--accent) 58%, var(--bg-elevated));
+  background-clip: padding-box;
+}
+
+.glass-panel {
+  background: color-mix(in srgb, var(--bg-elevated) 48%, transparent);
+  backdrop-filter: blur(18px) saturate(140%);
+  -webkit-backdrop-filter: blur(18px) saturate(140%);
+}
+
+.translation-actions {
+  background: color-mix(in srgb, var(--header) 58%, transparent);
+  backdrop-filter: blur(18px) saturate(150%);
+  -webkit-backdrop-filter: blur(18px) saturate(150%);
+}
+
+.translation-action {
+  color: #fff;
+}
+
+.translation-action:hover {
+  background: rgba(255, 255, 255, 0.16);
+}
+
+.electron-window-button {
+  display: inline-flex;
+  width: 30px;
+  height: 28px;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+  color: color-mix(in srgb, var(--window-control-fg) 82%, transparent);
+  transition: background 140ms ease, color 140ms ease;
+}
+
+.electron-window-button:hover {
+  background: rgba(255, 255, 255, 0.14);
+  background: color-mix(in srgb, var(--header-fg) 14%, transparent);
+  color: var(--window-control-fg);
+}
+
+.electron-window-button.electron-window-close:hover {
+  background: #d94b58;
+  color: #fff;
+}
+
+.language-options {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  scrollbar-width: thin;
+  scrollbar-color: color-mix(in srgb, var(--accent) 58%, transparent) transparent;
+  background: color-mix(in srgb, var(--bg-elevated) 38%, transparent);
+  box-shadow: var(--shadow-float);
+  backdrop-filter: blur(32px) saturate(175%);
+  -webkit-backdrop-filter: blur(32px) saturate(175%);
+}
+
+.language-options::-webkit-scrollbar {
+  width: 5px;
+}
+
+.language-options::-webkit-scrollbar-track,
+.language-options::-webkit-scrollbar-button {
+  background: transparent;
+}
+
+.language-options::-webkit-scrollbar-button {
+  display: block;
+  width: 0;
+  height: 0;
+  background: transparent;
+  color: transparent;
+  border: 0;
+}
+
+.language-options::-webkit-scrollbar-thumb {
+  border: 0;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--accent) 58%, transparent);
+}
+
+@layer base {
+  html {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  html,
+  body,
+  #app {
+    min-height: 100%;
+    background: var(--bg);
+    color: var(--fg);
+    font-family: var(--font-sans);
+  }
+
+  button:not(:disabled),
+  [role="button"]:not(:disabled) {
+    cursor: pointer;
+  }
+
+  h1,
+  h2,
+  h3 {
+    text-wrap: balance;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+}
+
+.pdf-canvas-dark {
+  filter: invert(0.9) hue-rotate(180deg);
+}
+
+.pdf-page {
+  --total-scale-factor: 1;
+}
+
+.translated-page-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  overflow: auto;
+  padding: 8% 9%;
+  color: var(--ink);
+  font-size: clamp(0.82rem, 1.45vw, 1.12rem);
+  line-height: 1.9;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  user-select: text;
+  pointer-events: auto;
+}
+
+.translated-page-overlay p {
+  margin: 0 0 1.25em;
+}
+
+.translated-page-overlay p:last-child {
+  margin-bottom: 0;
+}
+
+.translated-block {
+  position: absolute;
+  z-index: 3;
+  box-sizing: border-box;
+  overflow: hidden;
+  padding: 0.12em 0.28em;
+  border-radius: 0.35em;
+  background: color-mix(in srgb, var(--paper) 94%, var(--accent));
+  border: 0;
+  color: var(--fg);
+  line-height: 1.35;
+  font-family: "Vazirmatn", sans-serif;
+  white-space: nowrap;
+  overflow-wrap: normal;
+  box-shadow: none;
+  user-select: text;
+}
+
+.textLayer.translated-source-hidden {
+  visibility: hidden;
+}
+
+.textLayer {
+  position: absolute;
+  inset: 0;
+  overflow: clip;
+  opacity: 1;
+  line-height: 1;
+  letter-spacing: normal;
+  word-spacing: normal;
+  transform-origin: 0 0;
+  z-index: 1;
+  caret-color: transparent;
+}
+
+.textLayer :is(span, br) {
+  color: transparent;
+  position: absolute;
+  white-space: pre;
+  cursor: text;
+  transform-origin: 0% 0%;
+  user-select: text;
+}
+
+.textLayer {
+  --min-font-size: 1;
+  --text-scale-factor: calc(var(--total-scale-factor) * var(--min-font-size));
+  --min-font-size-inv: calc(1 / var(--min-font-size));
+}
+
+.textLayer > :not(.markedContent),
+.textLayer .markedContent span:not(.markedContent) {
+  z-index: 1;
+  --font-height: 0;
+  font-size: calc(var(--text-scale-factor) * var(--font-height));
+  --scale-x: 1;
+  --rotate: 0deg;
+  transform: rotate(var(--rotate)) scaleX(var(--scale-x))
+    scale(var(--min-font-size-inv));
+}
+
+.textLayer .markedContent {
+  display: contents;
+}
+
+.textLayer ::selection {
+  background: color-mix(in oklab, var(--accent) 35%, transparent);
+  color: transparent;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
