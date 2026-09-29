@@ -5,8 +5,6 @@ import appCss from "../styles.css?url";
 
 const APP_NAME = "Morio Book";
 
-const THEME_BOOTSTRAP = `(function(){try{var r=localStorage.getItem("tarjomaan-settings");if(!r)return;var t=JSON.parse(r).state.theme;if(t==="dark")document.documentElement.classList.add("dark");}catch(e){}})();`;
-
 export const Route = createRootRoute({
   head: () => ({
     meta: [
@@ -31,8 +29,6 @@ export const Route = createRootRoute({
     <html lang="fa" dir="rtl" suppressHydrationWarning>
       <head>
         <HeadContent />
-        <script dangerouslySetInnerHTML={{ __html: THEME_BOOTSTRAP }} />
-        <script src="https://js.puter.com/v2/" />
       </head>
       <body className="antialiased">
         <PreviewHostBridge />
