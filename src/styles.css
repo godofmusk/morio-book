@@ -248,16 +248,16 @@
 
 @media (max-width: 639px) {
   :root {
-    --bg: #080b16;
-    --bg-elevated: #11172a;
-    --bg-subtle: #0d1223;
-    --fg: #f5f7ff;
-    --muted: #aeb8d5;
-    --subtle: #7682a6;
-    --accent: #7c5cff;
-    --accent-fg: #ffffff;
-    --border: rgba(159, 147, 255, 0.22);
-    --shadow-float: 0 18px 44px rgba(0, 0, 0, 0.42), 0 0 28px rgba(124, 92, 255, 0.2);
+    --bg: #0b0d10;
+    --bg-elevated: #15181d;
+    --bg-subtle: #111419;
+    --fg: #f4f5f7;
+    --muted: #9da3ad;
+    --subtle: #6f7782;
+    --accent: #b8f2ff;
+    --accent-fg: #071014;
+    --border: rgba(255, 255, 255, 0.1);
+    --shadow-float: 0 18px 42px rgba(0, 0, 0, 0.48);
   }
 
   .glass-root {
@@ -267,64 +267,67 @@
   .glass-backdrop {
     position: fixed;
     background:
-      radial-gradient(circle at 12% 2%, rgba(124, 92, 255, 0.34), transparent 34%),
-      radial-gradient(circle at 94% 40%, rgba(31, 211, 255, 0.18), transparent 30%),
-      linear-gradient(160deg, #090d1b 0%, #0b1020 54%, #080b16 100%);
+      radial-gradient(circle at 50% -12%, rgba(82, 106, 122, 0.2), transparent 36%),
+      linear-gradient(180deg, #101318 0%, #0b0d10 48%, #090b0e 100%);
   }
 
   .reader-header {
-    min-height: 3.9rem;
+    min-height: 4.35rem;
     border: 0;
-    border-bottom: 1px solid rgba(159, 147, 255, 0.28);
-    background: rgba(11, 15, 31, 0.78) !important;
-    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.28), 0 0 26px rgba(124, 92, 255, 0.14);
-    backdrop-filter: blur(22px) saturate(150%);
-    -webkit-backdrop-filter: blur(22px) saturate(150%);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.09);
+    background: rgba(14, 17, 21, 0.88) !important;
+    box-shadow: 0 10px 28px rgba(0, 0, 0, 0.24);
+    backdrop-filter: blur(24px) saturate(120%);
+    -webkit-backdrop-filter: blur(24px) saturate(120%);
   }
 
   .reader-header img {
-    max-width: 6.5rem;
+    max-width: 7rem;
   }
 
   .reader-mobile-pagebar,
   .reader-mobile-dock {
-    border: 1px solid rgba(159, 147, 255, 0.28);
-    background: rgba(15, 21, 42, 0.84) !important;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    background: rgba(25, 29, 35, 0.92) !important;
     box-shadow: var(--shadow-float);
-    backdrop-filter: blur(24px) saturate(155%);
-    -webkit-backdrop-filter: blur(24px) saturate(155%);
+    backdrop-filter: blur(28px) saturate(135%);
+    -webkit-backdrop-filter: blur(28px) saturate(135%);
   }
 
   .reader-mobile-pagebar {
-    bottom: 5.15rem;
+    bottom: 5.3rem;
+    border-radius: 1rem;
   }
 
   .reader-mobile-dock {
-    bottom: 0.7rem;
+    bottom: 0.75rem;
+    border-radius: 1.25rem;
+    padding: 0.4rem;
   }
 
   .reader-mobile-dock button,
   .reader-mobile-pagebar button {
-    min-height: 2.7rem;
-    color: #cbd4f5;
+    min-height: 2.85rem;
+    color: #c8cdd5;
+    border-radius: 0.9rem;
   }
 
   .reader-mobile-dock button[aria-label="Read whole page"] {
-    background: linear-gradient(135deg, #7c5cff, #3dcfff);
-    color: white;
-    box-shadow: 0 0 18px rgba(124, 92, 255, 0.5);
+    background: var(--accent);
+    color: var(--accent-fg);
+    box-shadow: none;
   }
 
   .language-options {
-    background: rgba(17, 23, 42, 0.98);
-    border-color: rgba(159, 147, 255, 0.35);
-    box-shadow: 0 18px 45px rgba(0, 0, 0, 0.48), 0 0 24px rgba(124, 92, 255, 0.22);
-    backdrop-filter: blur(30px) saturate(160%);
-    -webkit-backdrop-filter: blur(30px) saturate(160%);
+    background: rgba(27, 31, 37, 0.96);
+    border-color: rgba(255, 255, 255, 0.14);
+    box-shadow: 0 20px 46px rgba(0, 0, 0, 0.58);
+    backdrop-filter: blur(34px) saturate(140%);
+    -webkit-backdrop-filter: blur(34px) saturate(140%);
   }
 
   .reader-settings-panel {
-    background: rgba(12, 17, 34, 0.97);
+    background: rgba(16, 19, 23, 0.98);
   }
 }
 
