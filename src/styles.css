@@ -313,8 +313,8 @@
   }
 
   .reader-mobile-dock button[aria-label="Read whole page"] {
-    background: var(--accent);
-    color: var(--accent-fg);
+    background: rgba(255, 255, 255, 0.08);
+    color: #c8cdd5;
     box-shadow: none;
   }
 
