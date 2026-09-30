@@ -11,11 +11,16 @@ export const Route = createRootRoute({
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
       { title: APP_NAME },
-      { name: "description", content: "خواندن PDF و ترجمه متن انتخاب‌شده" },
-      { name: "theme-color", content: "#3f6f64" },
+      {
+        name: "description",
+        content: "Morio Book؛ کتاب‌خوان PDF با ترجمه و پخش صوت متن",
+      },
+      { name: "application-name", content: APP_NAME },
+      { name: "apple-mobile-web-app-title", content: APP_NAME },
+      { name: "theme-color", content: "#000000" },
     ],
     links: [
-      { rel: "icon", type: "image/svg+xml", href: "/favicon.svg" },
+      { rel: "icon", type: "image/png", href: "/morio-book-icon.png" },
       { rel: "stylesheet", href: appCss },
       {
         rel: "stylesheet",
