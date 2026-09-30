@@ -23,6 +23,14 @@ const MEDICAL_DICTIONARY: Record<string, string> = {
   symptom: "علامت بیماری",
 };
 
+export async function translateRequest(body: { text?: unknown; sourceLang?: unknown; targetLang?: unknown }) {
+  const text = typeof body?.text === "string" ? body.text.trim().slice(0, 5000) : "";
+  const sourceLang = typeof body?.sourceLang === "string" ? body.sourceLang : "en";
+  const targetLang = typeof body?.targetLang === "string" ? body.targetLang : "fa";
+  if (!text) throw new Error("متنی برای ترجمه وجود ندارد");
+  return medicalTranslation(text, sourceLang, targetLang);
+}
+
 async function medicalTranslation(text: string, sourceLang: string, targetLang: string) {
   if (sourceLang === "en" && targetLang === "fa") {
     let translated = text;

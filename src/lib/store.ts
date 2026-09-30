@@ -36,7 +36,7 @@ type SettingsState = {
   bookmarksOpen: boolean;
   page: number;
   zoom: number;
-  pdfSource: "default" | "upload";
+  pdfSource: "empty" | "upload";
   uploadName: string;
   history: HistoryItem[];
   translationProviders: TranslationProviderSetting[];
@@ -49,7 +49,7 @@ type SettingsState = {
   setBookmarksOpen: (value: boolean) => void;
   setPage: (page: number) => void;
   setZoom: (zoom: number) => void;
-  setPdfSource: (source: "default" | "upload", name?: string) => void;
+  setPdfSource: (source: "empty" | "upload", name?: string) => void;
   setTranslationProviderEnabled: (id: TranslationProviderId, enabled: boolean) => void;
   moveTranslationProvider: (id: TranslationProviderId, direction: "up" | "down") => void;
   addHistory: (item: Omit<HistoryItem, "id" | "ts">) => void;
@@ -70,7 +70,7 @@ export const useSettings = create<SettingsState>()(
       bookmarksOpen: true,
       page: 1,
       zoom: 1,
-      pdfSource: "default",
+      pdfSource: "empty",
       uploadName: "",
       history: [],
       translationProviders: DEFAULT_TRANSLATION_PROVIDERS,
@@ -125,6 +125,7 @@ export const useSettings = create<SettingsState>()(
           ...currentState,
           ...state,
           sourceLang: state.sourceLang === "auto" || !state.sourceLang ? "en" : state.sourceLang,
+          pdfSource: state.pdfSource === "upload" ? "upload" : "empty",
         };
       },
       partialize: (state) => ({
