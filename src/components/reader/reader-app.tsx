@@ -416,12 +416,12 @@ function ReaderShell() {
       <header className="glass-panel reader-header flex shrink-0 items-center gap-2 bg-[var(--header)] px-2 py-1.5 text-white sm:px-3">
         <div className="flex min-w-0 flex-1 items-center gap-2">
           <img
-            src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Morio%20book-dark%20mod-YFq92plZKjHgqOzYtNJeFjEFHNHdeQ.png"
+            src={theme === "light" ? "/morio-logo-light.png" : "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Morio%20book-dark%20mod-YFq92plZKjHgqOzYtNJeFjEFHNHdeQ.png"}
             alt="Morio Book"
             className="h-8 w-auto max-w-[7.5rem] object-contain sm:h-9 sm:max-w-36"
           />
           <div className="min-w-0 flex-1">
-            <p className="truncate text-[11px] font-medium text-white">
+            <p className="reader-pdf-name truncate text-[11px] font-medium">
               {pdfSource === "upload" && uploadName ? uploadName : "No PDF selected"}
             </p>
           </div>

@@ -139,6 +139,14 @@
   -webkit-backdrop-filter: blur(18px) saturate(140%);
 }
 
+.reader-pdf-name {
+  color: #17233d !important;
+}
+
+.dark .reader-pdf-name {
+  color: #ffffff !important;
+}
+
 .translation-actions {
   background: color-mix(in srgb, var(--header) 58%, transparent);
   backdrop-filter: blur(18px) saturate(150%);
