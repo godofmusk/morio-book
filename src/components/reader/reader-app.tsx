@@ -35,7 +35,6 @@ import {
   saveUploadedPdf,
 } from "@/lib/pdf-storage";
 import {
-  DEFAULT_PDF_URL,
   useSettings,
 } from "@/lib/store";
 import { translateText } from "@/lib/translate";
@@ -110,7 +109,7 @@ function ReaderShell() {
 
   const [numPages, setNumPages] = useState(1);
   const [pageInput, setPageInput] = useState(String(page));
-  const [pdfData, setPdfData] = useState<string | ArrayBuffer>(DEFAULT_PDF_URL);
+  const [pdfData, setPdfData] = useState<string | ArrayBuffer | null>(null);
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [bookmarks, setBookmarks] = useState<PdfBookmark[]>([]);
   const [mobileBookmarksOpen, setMobileBookmarksOpen] = useState(false);
@@ -174,7 +173,7 @@ function ReaderShell() {
     let alive = true;
     async function restore() {
       if (pdfSource !== "upload") {
-        setPdfData(DEFAULT_PDF_URL);
+        setPdfData(null);
         return;
       }
       const stored = await loadUploadedPdf();
@@ -182,7 +181,7 @@ function ReaderShell() {
       if (stored) setPdfData(stored.data);
       else {
         setPdfSource("default");
-        setPdfData(DEFAULT_PDF_URL);
+        setPdfData(null);
       }
     }
     void restore();
@@ -246,14 +245,11 @@ function ReaderShell() {
       setError(null);
       setShowBtn(false);
       try {
-        const res = await translateText({
-          data: {
-            text: payload.text,
-            sourceLang,
-    targetLang,
-    providers: translationProviders,
-  },
-});
+      const res = await translateText({
+        text: payload.text,
+        sourceLang,
+        targetLang,
+      });
         if (!res.ok) {
           setError(res.error);
           return;
@@ -336,9 +332,11 @@ function ReaderShell() {
       if (!blocks.length) throw new Error("No text was detected on this page.");
       const paragraphTranslations: string[] = [];
       const results = await Promise.all(blocks.map(async (block, index) => {
-        const res = await translateText({
-          data: { text: block.text, sourceLang, targetLang },
-        });
+      const res = await translateText({
+        text: block.text,
+        sourceLang,
+        targetLang,
+      });
         if (!res.ok) throw new Error(res.error);
         paragraphTranslations[index] = res.text.replace(/[\r\n]+/g, " ").replace(/\s+/g, " ").trim();
         const parts = block.parts ?? [{ text: block.text, rect: block.rect }];
