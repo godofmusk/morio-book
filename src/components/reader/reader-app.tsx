@@ -166,7 +166,7 @@ function ReaderShell() {
       if (!alive) return;
       if (stored) setPdfData(stored.data);
       else {
-        setPdfSource("default");
+        setPdfSource("empty");
         setPdfData(null);
       }
     }
@@ -413,7 +413,7 @@ function ReaderShell() {
   return (
     <div className="glass-root flex h-dvh flex-col bg-bg text-fg">
       <div className="glass-backdrop" aria-hidden="true" />
-      <header className="glass-panel flex shrink-0 items-center gap-2 bg-[var(--header)] px-2 py-1.5 text-white sm:px-3">
+      <header className="glass-panel reader-header flex shrink-0 items-center gap-2 bg-[var(--header)] px-2 py-1.5 text-white sm:px-3">
         <div className="flex min-w-0 flex-1 items-center gap-2">
           <img
             src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Morio%20book-dark%20mod-YFq92plZKjHgqOzYtNJeFjEFHNHdeQ.png"
@@ -573,13 +573,13 @@ function ReaderShell() {
         ) : null}
       </header>
 
-      <div className="fixed inset-x-2 bottom-14 z-50 flex items-center gap-0 rounded-2xl border border-white/10 bg-[var(--header)]/95 p-1.5 text-white shadow-[var(--shadow-float)] backdrop-blur-xl sm:hidden" dir="ltr">
+      <div className="reader-mobile-pagebar fixed inset-x-2 bottom-16 z-50 flex items-center gap-0 rounded-2xl border border-white/15 bg-[var(--header)]/90 p-1.5 text-white shadow-[var(--shadow-float)] backdrop-blur-2xl sm:hidden" dir="ltr">
         <Button className="min-w-0 flex-1" variant="ghost" size="icon-sm" aria-label="Previous page" disabled={!canPrev} onClick={() => setPage(page - 1)}><ChevronLeft className="size-4" /></Button>
         <label className="flex min-w-0 flex-[2] items-center justify-center gap-1 text-xs tabular-nums text-muted"><span className="sr-only">Go to page</span><input type="number" min={1} max={Math.max(numPages, 1)} value={pageInput} aria-label="Current page" className="w-8 bg-transparent text-center text-xs text-white outline-none [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none" onChange={(event) => { const nextValue = event.target.value; const previousValue = pageInput; setPageInput(nextValue); if (nextValue.length > previousValue.length) { const nextPage = Number(nextValue); if (Number.isFinite(nextPage)) setPage(Math.min(Math.max(1, nextPage), Math.max(numPages, 1))); } }} onBlur={(event) => { const nextPage = Number(event.currentTarget.value); const normalized = Number.isFinite(nextPage) ? Math.min(Math.max(1, nextPage), Math.max(numPages, 1)) : page; setPage(normalized); setPageInput(String(normalized)); }} /><span aria-hidden="true">/ {numPages}</span></label>
         <Button className="min-w-0 flex-1" variant="ghost" size="icon-sm" aria-label="Next page" disabled={!canNext} onClick={() => setPage(page + 1)}><ChevronRight className="size-4" /></Button>
         <Button className="min-w-0 flex-1" variant="ghost" size="icon-sm" aria-label="Zoom out" onClick={() => setZoom(zoom - 0.1)}><Minus className="size-4" /></Button><span className="w-10 shrink-0 text-center text-[10px] tabular-nums text-muted">{Math.round(zoom * 100)}%</span><Button className="min-w-0 flex-1" variant="ghost" size="icon-sm" aria-label="Zoom in" onClick={() => setZoom(zoom + 0.1)}><Plus className="size-4" /></Button>
       </div>
-      <div className="fixed inset-x-0 bottom-0 z-40 flex items-center gap-1 border-t border-white/10 bg-[var(--header)] p-1 text-white sm:hidden" dir="ltr">
+      <div className="reader-mobile-dock fixed inset-x-2 bottom-2 z-40 flex items-center gap-1 rounded-2xl border border-white/15 bg-[var(--header)]/90 p-1.5 text-white shadow-[var(--shadow-float)] backdrop-blur-2xl sm:hidden" dir="ltr">
 
         <Button className="min-w-0 flex-1" variant="ghost" size="icon-sm" aria-label={translatedBlocks ? "Restore original" : "Translate page"} disabled={pageTranslating || (!translatedBlocks && !pageBlocks.length)} onClick={() => void translateWholePage()}>{pageTranslating ? <LoaderCircle className="size-4 animate-spin" /> : translatedPageText ? <RotateCcw className="size-4" /> : <Languages className="size-4" />}</Button>
         <Button className="min-w-0 flex-1" variant="ghost" size="icon-sm" aria-label="Read whole page" disabled={loading || !(translatedPageText?.trim() || pageBlocks.length || pageText.trim())} onClick={() => speakText((translatedPageText && translatedPageText.trim()) || pageBlocks.map((block) => block.text).join("\\n\\n") || pageText, "Whole page", translatedPageText ? targetLang : sourceLang)}><Volume2 className="size-4" /></Button>
@@ -894,10 +894,10 @@ function SettingsDialog({
   return (
     <Dialog.Root open={open} onOpenChange={onOpenChange}>
       <Dialog.Portal>
-        <Dialog.Overlay className="fixed inset-0 z-50 bg-bg/70" />
+        <Dialog.Overlay className="reader-dialog-overlay fixed inset-0 z-50 bg-bg/70 backdrop-blur-md" />
         <Dialog.Content
           data-settings-root=""
-          className="fixed start-0 top-0 z-50 flex h-dvh w-full max-w-md flex-col overflow-hidden bg-elevated shadow-[var(--shadow-float)] outline-none"
+          className="reader-settings-panel fixed start-0 top-0 z-50 flex h-dvh w-full max-w-md flex-col overflow-hidden bg-elevated shadow-[var(--shadow-float)] outline-none"
         >
           <div className="flex items-center justify-between border-b border-border px-4 py-3">
             <Dialog.Title className="text-sm font-medium">Settings</Dialog.Title>
@@ -1095,7 +1095,7 @@ function FieldSelect({
         <ChevronDown className={cn("size-4 text-subtle transition-transform", open && "rotate-180")} />
       </button>
       {open ? (
-        <div className="language-options absolute inset-x-0 top-full z-50 mt-2 max-h-60 overflow-auto rounded-xl p-1.5" role="listbox">
+        <div className="language-options absolute inset-x-0 top-full z-[70] mt-2 max-h-60 overflow-auto rounded-xl p-1.5" role="listbox">
           {options.map((option) => (
             <button
               key={option.code}

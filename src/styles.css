@@ -104,10 +104,7 @@
   inset: 0;
   z-index: -1;
   pointer-events: none;
-  background:
-    radial-gradient(circle at 12% 8%, color-mix(in srgb, var(--accent) 22%, transparent), transparent 32%),
-    radial-gradient(circle at 88% 18%, color-mix(in srgb, var(--muted) 28%, transparent), transparent 30%),
-    linear-gradient(135deg, var(--bg), color-mix(in srgb, var(--bg-subtle) 78%, var(--accent)));
+  background: linear-gradient(135deg, var(--bg), var(--bg-subtle));
 }
 
 * {
@@ -184,10 +181,12 @@
   gap: 0.35rem;
   scrollbar-width: thin;
   scrollbar-color: color-mix(in srgb, var(--accent) 58%, transparent) transparent;
-  background: color-mix(in srgb, var(--bg-elevated) 38%, transparent);
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
   box-shadow: var(--shadow-float);
-  backdrop-filter: blur(32px) saturate(175%);
-  -webkit-backdrop-filter: blur(32px) saturate(175%);
+  backdrop-filter: blur(24px) saturate(125%);
+  -webkit-backdrop-filter: blur(24px) saturate(125%);
+  isolation: isolate;
 }
 
 .language-options::-webkit-scrollbar {
@@ -212,6 +211,121 @@
   border: 0;
   border-radius: 999px;
   background: color-mix(in srgb, var(--accent) 58%, transparent);
+}
+
+.reader-mobile-pagebar,
+.reader-mobile-dock {
+  border-color: var(--border);
+  box-shadow: var(--shadow-float);
+}
+
+.reader-mobile-dock {
+  padding-bottom: max(0.375rem, env(safe-area-inset-bottom));
+}
+
+.reader-mobile-dock button,
+.reader-mobile-pagebar button {
+  border-radius: 0.85rem;
+  color: rgba(255, 255, 255, 0.82);
+}
+
+.reader-mobile-dock button:hover,
+.reader-mobile-pagebar button:hover {
+  background: color-mix(in srgb, var(--accent) 28%, transparent);
+  color: #fff;
+}
+
+.reader-dialog-overlay {
+  background: color-mix(in srgb, var(--bg) 66%, transparent);
+}
+
+.reader-settings-panel {
+  background: color-mix(in srgb, var(--bg-elevated) 92%, var(--accent));
+  border-inline-end: 1px solid color-mix(in srgb, var(--accent) 22%, var(--border));
+  backdrop-filter: blur(28px) saturate(150%);
+  -webkit-backdrop-filter: blur(28px) saturate(150%);
+}
+
+@media (max-width: 639px) {
+  :root {
+    --bg: #080b16;
+    --bg-elevated: #11172a;
+    --bg-subtle: #0d1223;
+    --fg: #f5f7ff;
+    --muted: #aeb8d5;
+    --subtle: #7682a6;
+    --accent: #7c5cff;
+    --accent-fg: #ffffff;
+    --border: rgba(159, 147, 255, 0.22);
+    --shadow-float: 0 18px 44px rgba(0, 0, 0, 0.42), 0 0 28px rgba(124, 92, 255, 0.2);
+  }
+
+  .glass-root {
+    background: var(--bg);
+  }
+
+  .glass-backdrop {
+    position: fixed;
+    background:
+      radial-gradient(circle at 12% 2%, rgba(124, 92, 255, 0.34), transparent 34%),
+      radial-gradient(circle at 94% 40%, rgba(31, 211, 255, 0.18), transparent 30%),
+      linear-gradient(160deg, #090d1b 0%, #0b1020 54%, #080b16 100%);
+  }
+
+  .reader-header {
+    min-height: 3.9rem;
+    border: 0;
+    border-bottom: 1px solid rgba(159, 147, 255, 0.28);
+    background: rgba(11, 15, 31, 0.78) !important;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.28), 0 0 26px rgba(124, 92, 255, 0.14);
+    backdrop-filter: blur(22px) saturate(150%);
+    -webkit-backdrop-filter: blur(22px) saturate(150%);
+  }
+
+  .reader-header img {
+    max-width: 6.5rem;
+  }
+
+  .reader-mobile-pagebar,
+  .reader-mobile-dock {
+    border: 1px solid rgba(159, 147, 255, 0.28);
+    background: rgba(15, 21, 42, 0.84) !important;
+    box-shadow: var(--shadow-float);
+    backdrop-filter: blur(24px) saturate(155%);
+    -webkit-backdrop-filter: blur(24px) saturate(155%);
+  }
+
+  .reader-mobile-pagebar {
+    bottom: 5.15rem;
+  }
+
+  .reader-mobile-dock {
+    bottom: 0.7rem;
+  }
+
+  .reader-mobile-dock button,
+  .reader-mobile-pagebar button {
+    min-height: 2.7rem;
+    color: #cbd4f5;
+  }
+
+  .reader-mobile-dock button[aria-label="Read whole page"] {
+    background: linear-gradient(135deg, #7c5cff, #3dcfff);
+    color: white;
+    box-shadow: 0 0 18px rgba(124, 92, 255, 0.5);
+  }
+
+  .language-options {
+    background: rgba(17, 23, 42, 0.98);
+    border-color: rgba(159, 147, 255, 0.35);
+    box-shadow: 0 18px 45px rgba(0, 0, 0, 0.48), 0 0 24px rgba(124, 92, 255, 0.22);
+    backdrop-filter: blur(30px) saturate(160%);
+    -webkit-backdrop-filter: blur(30px) saturate(160%);
+  }
+
+  .reader-settings-panel {
+    background: rgba(12, 17, 34, 0.97);
+  }
 }
 
 @layer base {
