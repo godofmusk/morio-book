@@ -312,12 +312,6 @@
     border-radius: 0.9rem;
   }
 
-  .reader-mobile-dock button[aria-label="Read whole page"] {
-    background: rgba(255, 255, 255, 0.08);
-    color: #c8cdd5;
-    box-shadow: none;
-  }
-
   .language-options {
     background: rgba(27, 31, 37, 0.96);
     border-color: rgba(255, 255, 255, 0.14);
