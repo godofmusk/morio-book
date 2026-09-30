@@ -963,8 +963,8 @@ function SettingsDialog({
                 <p className="mt-1 text-[11px] text-subtle">Services are tried from top to bottom. Disabled services are skipped.</p>
               </div>
               <div className="space-y-2">
-                {translationProviders.map((provider, index) => {
-                  const label = provider.id === "google" ? "Google Translate" : provider.id === "mymemory" ? "MyMemory" : "Lingva Translate";
+{translationProviders.filter((provider) => provider.id !== "medical").map((provider, index) => {
+                const label = provider.id === "google" ? "Google Translate" : provider.id === "mymemory" ? "MyMemory" : "Lingva Translate";
                   return (
                     <div key={provider.id} className="flex items-center gap-2 rounded-xl bg-bg px-3 py-2.5 shadow-[var(--shadow-border)]">
                       <div className="flex min-w-0 flex-1 items-center gap-2">

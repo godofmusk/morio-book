@@ -3,7 +3,7 @@ import { persist } from "zustand/middleware";
 
 export type TranslateMode = "split" | "replace" | "float";
 export type ThemeMode = "system" | "light" | "dark";
-export type TranslationProviderId = "google" | "mymemory" | "lingva";
+export type TranslationProviderId = "medical" | "google" | "mymemory" | "lingva";
 
 export type TranslationProviderSetting = {
   id: TranslationProviderId;
@@ -11,6 +11,7 @@ export type TranslationProviderSetting = {
 };
 
 export const DEFAULT_TRANSLATION_PROVIDERS: TranslationProviderSetting[] = [
+  { id: "medical", enabled: true },
   { id: "google", enabled: true },
   { id: "mymemory", enabled: true },
   { id: "lingva", enabled: true },

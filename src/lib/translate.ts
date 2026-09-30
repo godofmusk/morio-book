@@ -1,4 +1,3 @@
-import { createServerFn } from "@tanstack/react-start";
 import { languageLabel } from "./languages";
 import {
   DEFAULT_TRANSLATION_PROVIDERS,
@@ -93,7 +92,43 @@ async function translateWithLingva(input: TranslateInput): Promise<ProviderResul
   return text ? { text } : null;
 }
 
+const MEDICAL_DICTIONARY: Record<string, string> = {
+  "blood pressure": "فشار خون",
+  "heart rate": "ضربان قلب",
+  "heart failure": "نارسایی قلبی",
+  "blood glucose": "قند خون",
+  "blood sugar": "قند خون",
+  "diabetes mellitus": "دیابت شیرین",
+  "type 2 diabetes": "دیابت نوع ۲",
+  "hypertension": "پرفشاری خون",
+  "hypotension": "افت فشار خون",
+  "myocardial infarction": "سکته قلبی",
+  "stroke": "سکته مغزی",
+  "inflammation": "التهاب",
+  "infection": "عفونت",
+  "immune system": "سیستم ایمنی",
+  "side effects": "عوارض جانبی",
+  "clinical trial": "کارآزمایی بالینی",
+  "diagnosis": "تشخیص",
+  "treatment": "درمان",
+  "prescription": "نسخه پزشکی",
+  "symptom": "علامت بیماری",
+};
+
+function translateWithMedicalDictionary(input: TranslateInput): ProviderResult | null {
+  if (input.sourceLang !== "en" || input.targetLang !== "fa") return null;
+  let text = input.text;
+  let changed = false;
+  for (const [term, translation] of Object.entries(MEDICAL_DICTIONARY)) {
+    const pattern = new RegExp(`\\\\b${term.replace(/[.*+?^${}()|[\\]\\\\]/g, "\\\\$&")}\\\\b`, "gi");
+    text = text.replace(pattern, translation);
+    changed ||= text !== input.text;
+  }
+  return changed ? { text } : null;
+}
+
 async function translateWithProvider(id: TranslationProviderId, input: TranslateInput): Promise<ProviderResult | null> {
+  if (id === "medical") return translateWithMedicalDictionary(input);
   if (id === "google") return translateWithGoogle(input);
   if (id === "mymemory") return translateWithMyMemory(input);
   return translateWithLingva(input);
@@ -136,33 +171,24 @@ async function translateWithGoogle(
   return { text, detected };
 }
 
-export const translateImage = createServerFn({ method: "POST" })
-  .validator(sanitizeImageInput)
-  .handler(async ({ data }): Promise<TranslateResult> => {
-    try {
-      const text = await extractTextFromImage(data);
-      if (!text) return { ok: false, error: "متنی از تصویر صفحه خوانده نشد" };
-      const translated = await translateWithProviders({
-        text,
-        sourceLang: data.sourceLang,
-        targetLang: data.targetLang,
-      });
-      if (translated) return { ok: true, text: translated.text, detected: translated.detected };
-      return { ok: false, error: "ترجمه در حال حاضر در دسترس نیست" };
-    } catch {
-      return { ok: false, error: "خطا در خواندن یا ترجمه تصویر صفحه" };
-    }
-  });
+export async function translateImage(input: ImageTranslateInput): Promise<TranslateResult> {
+  try {
+    const data = sanitizeImageInput(input);
+    const text = await extractTextFromImage(data);
+    if (!text) return { ok: false, error: "متنی از تصویر صفحه خوانده نشد" };
+    const translated = await translateWithProviders({ text, sourceLang: data.sourceLang, targetLang: data.targetLang });
+    return translated ? { ok: true, text: translated.text, detected: translated.detected } : { ok: false, error: "ترجمه در حال حاضر در دسترس نیست" };
+  } catch {
+    return { ok: false, error: "خطا در خواندن یا ترجمه تصویر صفحه" };
+  }
+}
 
-export const translateText = createServerFn({ method: "POST" })
-  .validator(sanitizeInput)
-  .handler(async ({ data }): Promise<TranslateResult> => {
-    try {
-      const translated = await translateWithProviders(data, data.providers);
-      if (translated) return { ok: true, text: translated.text, detected: translated.detected };
-
-      return { ok: false, error: "ترجمه در حال حاضر در دسترس نیست" };
-    } catch {
-      return { ok: false, error: "خطا در ترجمه. دوباره تلاش کنید." };
-    }
-  });
+export async function translateText(input: TranslateInput): Promise<TranslateResult> {
+  try {
+    const data = sanitizeInput(input);
+    const translated = await translateWithProviders(data, data.providers);
+    return translated ? { ok: true, text: translated.text, detected: translated.detected } : { ok: false, error: "ترجمه در حال حاضر در دسترس نیست" };
+  } catch {
+    return { ok: false, error: "خطا در ترجمه. دوباره تلاش کنید." };
+  }
+}
