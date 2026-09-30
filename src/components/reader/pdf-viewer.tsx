@@ -87,7 +87,7 @@ export function PdfViewer({
   const onTextBlocksRef = useRef(onTextBlocks);
   onTextBlocksRef.current = onTextBlocks;
 
-  const [status, setStatus] = useState<"loading" | "ready" | "error">("loading");
+  const [status, setStatus] = useState<"empty" | "loading" | "ready" | "error">("empty");
   const [error, setError] = useState<string | null>(null);
   const [pageSize, setPageSize] = useState({ width: 396, height: 612 });
   const [viewWidth, setViewWidth] = useState(0);
@@ -106,7 +106,12 @@ export function PdfViewer({
   }, []);
 
   useEffect(() => {
-    if (!source) return;
+    if (!source) {
+      setStatus("empty");
+      setError(null);
+      pdfRef.current = null;
+      return;
+    }
     const src = source;
     let cancelled = false;
     let destroy: (() => void) | undefined;
@@ -530,11 +535,15 @@ export function PdfViewer({
   </div>
   );
   })}
-          {status === "loading" ? (
-            <div className="absolute inset-0 z-10 flex items-center justify-center bg-paper/80 text-sm text-muted">
-              Opening page…
-            </div>
-          ) : null}
+{status === "loading" ? (
+  <div className="absolute inset-0 z-10 flex items-center justify-center bg-paper/80 text-sm text-muted">
+  Opening page…
+  </div>
+  ) : status === "empty" ? (
+  <div className="absolute inset-0 z-10 flex items-center justify-center bg-paper p-6 text-center text-sm text-muted">
+  Open a PDF to start reading
+  </div>
+  ) : null}
           {status === "error" ? (
             <div className="absolute inset-0 z-10 flex items-center justify-center bg-paper p-6 text-center text-sm text-muted">
               {error}

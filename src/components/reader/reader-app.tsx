@@ -68,20 +68,6 @@ function BookmarkTree({ items, onSelect }: { items: PdfBookmark[]; onSelect: (pa
 }
 
 export function ReaderApp() {
-  const [mounted, setMounted] = useState(false);
-  useEffect(() => {
-    const finish = () => setMounted(true);
-    const unsub = useSettings.persist.onFinishHydration(finish);
-    if (useSettings.persist.hasHydrated()) finish();
-    return unsub;
-  }, []);
-  if (!mounted) {
-    return (
-      <div className="flex h-dvh items-center justify-center bg-bg text-sm text-muted">
-        Preparing reader…
-      </div>
-    );
-  }
   return <ReaderShell />;
 }
 
@@ -436,7 +422,7 @@ function ReaderShell() {
           />
           <div className="min-w-0 flex-1">
             <p className="truncate text-[11px] font-medium text-white">
-              {pdfSource === "upload" && uploadName ? uploadName : "book.pdf"}
+              {pdfSource === "upload" && uploadName ? uploadName : "No PDF selected"}
             </p>
           </div>
         </div>
