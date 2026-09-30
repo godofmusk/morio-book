@@ -255,36 +255,21 @@
 }
 
 @media (max-width: 639px) {
-  :root {
-    --bg: #0b0d10;
-    --bg-elevated: #15181d;
-    --bg-subtle: #111419;
-    --fg: #f4f5f7;
-    --muted: #9da3ad;
-    --subtle: #6f7782;
-    --accent: #b8f2ff;
-    --accent-fg: #071014;
-    --border: rgba(255, 255, 255, 0.1);
-    --shadow-float: 0 18px 42px rgba(0, 0, 0, 0.48);
-  }
-
   .glass-root {
     background: var(--bg);
   }
 
   .glass-backdrop {
     position: fixed;
-    background:
-      radial-gradient(circle at 50% -12%, rgba(82, 106, 122, 0.2), transparent 36%),
-      linear-gradient(180deg, #101318 0%, #0b0d10 48%, #090b0e 100%);
+    background: var(--bg);
   }
 
   .reader-header {
     min-height: 4.35rem;
     border: 0;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.09);
-    background: rgba(14, 17, 21, 0.88) !important;
-    box-shadow: 0 10px 28px rgba(0, 0, 0, 0.24);
+    border-bottom: 1px solid var(--border);
+    background: color-mix(in srgb, var(--bg-elevated) 88%, transparent) !important;
+    box-shadow: 0 10px 28px color-mix(in srgb, var(--fg) 24%, transparent);
     backdrop-filter: blur(24px) saturate(120%);
     -webkit-backdrop-filter: blur(24px) saturate(120%);
   }
@@ -295,8 +280,8 @@
 
   .reader-mobile-pagebar,
   .reader-mobile-dock {
-    border: 1px solid rgba(255, 255, 255, 0.12);
-    background: rgba(25, 29, 35, 0.92) !important;
+    border: 1px solid var(--border);
+    background: color-mix(in srgb, var(--bg-elevated) 92%, transparent) !important;
     box-shadow: var(--shadow-float);
     backdrop-filter: blur(28px) saturate(135%);
     -webkit-backdrop-filter: blur(28px) saturate(135%);
@@ -316,26 +301,26 @@
   .reader-mobile-dock button,
   .reader-mobile-pagebar button {
     min-height: 2.85rem;
-    color: #c8cdd5;
+    color: var(--muted);
     border-radius: 0.9rem;
   }
 
   .language-options {
-    background: rgba(27, 31, 37, 0.96);
-    border-color: rgba(255, 255, 255, 0.14);
-    scrollbar-color: rgba(255, 255, 255, 0.42) transparent;
-    box-shadow: 0 20px 46px rgba(0, 0, 0, 0.58);
+    background: color-mix(in srgb, var(--bg-elevated) 96%, transparent);
+    border-color: var(--border);
+    scrollbar-color: var(--muted) transparent;
+    box-shadow: var(--shadow-float);
     backdrop-filter: blur(34px) saturate(100%);
     -webkit-backdrop-filter: blur(34px) saturate(100%);
   }
 
   .language-options::-webkit-scrollbar-thumb {
-    background: rgba(255, 255, 255, 0.42);
+    background: var(--muted);
   }
 
   .reader-settings-panel {
-    background: rgba(16, 19, 23, 0.98);
-    border-inline-end-color: rgba(255, 255, 255, 0.12);
+    background: color-mix(in srgb, var(--bg-elevated) 98%, transparent);
+    border-inline-end-color: var(--border);
   }
 }
 
