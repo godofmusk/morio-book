@@ -511,7 +511,7 @@ function ReaderShell() {
             <Plus className="size-4" />
           </Button>
 
-          <Button variant="ghost" size="icon-sm" aria-label="Read whole page" onClick={() => speakText((translatedPageText && translatedPageText.trim()) || pageBlocks.map((block) => block.text).join("\n\n") || pageText, "Whole page", translatedPageText ? targetLang : sourceLang)}>
+          <Button className="bg-transparent" variant="ghost" size="icon-sm" aria-label="Read whole page" onClick={() => speakText((translatedPageText && translatedPageText.trim()) || pageBlocks.map((block) => block.text).join("\n\n") || pageText, "Whole page", translatedPageText ? targetLang : sourceLang)}>
             <Volume2 className="size-4" />
           </Button>
           <Button
@@ -897,7 +897,7 @@ function SettingsDialog({
         <Dialog.Overlay className="reader-dialog-overlay fixed inset-0 z-50 bg-bg/70 backdrop-blur-md" />
         <Dialog.Content
           data-settings-root=""
-          className="reader-settings-panel fixed start-0 top-0 z-50 flex h-dvh w-full max-w-md flex-col overflow-hidden bg-elevated shadow-[var(--shadow-float)] outline-none"
+          className="reader-settings-panel fixed start-0 top-0 z-50 flex h-dvh w-full max-w-md flex-col overflow-hidden border-e border-border bg-bg shadow-[var(--shadow-float)] outline-none"
         >
           <div className="flex items-center justify-between border-b border-border px-4 py-3">
             <Dialog.Title className="text-sm font-medium">Settings</Dialog.Title>
