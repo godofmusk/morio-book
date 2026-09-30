@@ -140,11 +140,11 @@
 }
 
 .reader-pdf-name {
-  color: var(--header-fg);
+  color: #17233d !important;
 }
 
-:not(.dark) .reader-pdf-name {
-  color: #17233d;
+.dark .reader-pdf-name {
+  color: #ffffff !important;
 }
 
 .translation-actions {
