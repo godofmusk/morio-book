@@ -16,7 +16,6 @@ import {
   Plus,
   RotateCcw,
   Settings2,
-  ScanText,
   Sun,
   X,
   ChevronDown,
@@ -140,7 +139,6 @@ function ReaderShell() {
   const [translatedPageText, setTranslatedPageText] = useState<string | null>(null);
   const [pageBlocks, setPageBlocks] = useState<TextBlock[]>([]);
   const [pageImage, setPageImage] = useState<string | null>(null);
-  const [ocrLoading, setOcrLoading] = useState(false);
   const [translatedBlocks, setTranslatedBlocks] = useState<Array<TextBlock & { translation: string }> | null>(null);
   const [pageTranslating, setPageTranslating] = useState(false);
   const [floatCard, setFloatCard] = useState<{
@@ -322,28 +320,6 @@ function ReaderShell() {
     dismissTransient();
   }
 
-
-  async function runOcr() {
-    if (!pageImage || ocrLoading) return;
-    setOcrLoading(true);
-    setError(null);
-    try {
-      const puter = (window as Window & { puter?: { ai?: { ocr?: { txt: (image: string) => Promise<string> } } } }).puter;
-      if (!puter?.ai?.ocr?.txt) throw new Error("OCR service is still loading. Please try again.");
-      const timeout = new Promise<never>((_, reject) => window.setTimeout(() => reject(new Error("OCR service timed out. Please try again.")), 30_000));
-      const text = (await Promise.race([puter.ai.ocr.txt(pageImage), timeout])).trim();
-      if (!text) throw new Error("No text was detected");
-      setPageText(text);
-      setPageTextItems([text]);
-    } catch (error) {
-      const message = error instanceof DOMException && error.name === "AbortError"
-        ? "OCR service timed out. Please try again or use the desktop app's offline OCR."
-        : error instanceof Error ? error.message : "OCR failed";
-      setError(message);
-    } finally {
-      setOcrLoading(false);
-    }
-  }
 
   async function translateWholePage() {
     if (translatedBlocks) {
@@ -550,9 +526,7 @@ function ReaderShell() {
           >
             <Plus className="size-4" />
           </Button>
-          <Button variant="ghost" size="icon-sm" aria-label="Run OCR" disabled={!pageImage || ocrLoading} onClick={() => void runOcr()}>
-            {ocrLoading ? <LoaderCircle className="size-4 animate-spin" /> : <ScanText className="size-4" />}
-          </Button>
+
           <Button variant="ghost" size="icon-sm" aria-label="Read whole page" onClick={() => speakText((translatedPageText && translatedPageText.trim()) || pageBlocks.map((block) => block.text).join("\n\n") || pageText, "Whole page", translatedPageText ? targetLang : sourceLang)}>
             <Volume2 className="size-4" />
           </Button>
@@ -622,9 +596,7 @@ function ReaderShell() {
         <Button className="min-w-0 flex-1" variant="ghost" size="icon-sm" aria-label="Zoom out" onClick={() => setZoom(zoom - 0.1)}><Minus className="size-4" /></Button><span className="w-10 shrink-0 text-center text-[10px] tabular-nums text-muted">{Math.round(zoom * 100)}%</span><Button className="min-w-0 flex-1" variant="ghost" size="icon-sm" aria-label="Zoom in" onClick={() => setZoom(zoom + 0.1)}><Plus className="size-4" /></Button>
       </div>
       <div className="fixed inset-x-0 bottom-0 z-40 flex items-center gap-1 border-t border-white/10 bg-[var(--header)] p-1 text-white sm:hidden" dir="ltr">
-        <Button className="min-w-0 flex-1" variant="ghost" size="icon-sm" aria-label="Run OCR" disabled={!pageImage || ocrLoading} onClick={() => void runOcr()}>
-          {ocrLoading ? <LoaderCircle className="size-4 animate-spin" /> : <ScanText className="size-4" />}
-        </Button>
+
         <Button className="min-w-0 flex-1" variant="ghost" size="icon-sm" aria-label={translatedBlocks ? "Restore original" : "Translate page"} disabled={pageTranslating || (!translatedBlocks && !pageBlocks.length)} onClick={() => void translateWholePage()}>{pageTranslating ? <LoaderCircle className="size-4 animate-spin" /> : translatedPageText ? <RotateCcw className="size-4" /> : <Languages className="size-4" />}</Button>
         <Button className="min-w-0 flex-1" variant="ghost" size="icon-sm" aria-label="Open another PDF" onClick={() => fileRef.current?.click()}><FileUp className="size-4" /></Button>
         <Button className="min-w-0 flex-1" variant="ghost" size="icon-sm" aria-label={theme === "dark" ? "Light mode" : "Dark mode"} onClick={() => setTheme(theme === "dark" ? "light" : "dark")}>{theme === "dark" ? <Sun className="size-4" /> : <Moon className="size-4" />}</Button>
