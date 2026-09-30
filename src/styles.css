@@ -180,12 +180,12 @@
   flex-direction: column;
   gap: 0.35rem;
   scrollbar-width: thin;
-  scrollbar-color: color-mix(in srgb, var(--accent) 58%, transparent) transparent;
+  scrollbar-color: color-mix(in srgb, var(--muted) 58%, transparent) transparent;
   background: var(--bg-elevated);
   border: 1px solid var(--border);
   box-shadow: var(--shadow-float);
-  backdrop-filter: blur(24px) saturate(125%);
-  -webkit-backdrop-filter: blur(24px) saturate(125%);
+  backdrop-filter: blur(24px) saturate(100%);
+  -webkit-backdrop-filter: blur(24px) saturate(100%);
   isolation: isolate;
 }
 
@@ -240,10 +240,10 @@
 }
 
 .reader-settings-panel {
-  background: color-mix(in srgb, var(--bg-elevated) 92%, var(--accent));
-  border-inline-end: 1px solid color-mix(in srgb, var(--accent) 22%, var(--border));
-  backdrop-filter: blur(28px) saturate(150%);
-  -webkit-backdrop-filter: blur(28px) saturate(150%);
+  background: color-mix(in srgb, var(--bg-elevated) 92%, var(--bg-subtle));
+  border-inline-end: 1px solid var(--border);
+  backdrop-filter: blur(28px) saturate(100%);
+  -webkit-backdrop-filter: blur(28px) saturate(100%);
 }
 
 @media (max-width: 639px) {
@@ -321,13 +321,19 @@
   .language-options {
     background: rgba(27, 31, 37, 0.96);
     border-color: rgba(255, 255, 255, 0.14);
+    scrollbar-color: rgba(255, 255, 255, 0.42) transparent;
     box-shadow: 0 20px 46px rgba(0, 0, 0, 0.58);
-    backdrop-filter: blur(34px) saturate(140%);
-    -webkit-backdrop-filter: blur(34px) saturate(140%);
+    backdrop-filter: blur(34px) saturate(100%);
+    -webkit-backdrop-filter: blur(34px) saturate(100%);
+  }
+
+  .language-options::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.42);
   }
 
   .reader-settings-panel {
     background: rgba(16, 19, 23, 0.98);
+    border-inline-end-color: rgba(255, 255, 255, 0.12);
   }
 }
 
