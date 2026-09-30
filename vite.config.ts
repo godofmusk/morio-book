@@ -61,6 +61,41 @@ function pgliteBootstrapPlugin(): Plugin {
  * and returns the 302 / completion HTML. Deployed apps do not use the popup
  * (full-page OAuth redirect), so `apply: "serve"` is enough.
  */
+function devTranslateApiPlugin(): Plugin {
+  return {
+    name: "app-builder:dev-translate-api",
+    apply: "serve",
+    configureServer(server) {
+      server.middlewares.use("/api/translate", async (req, res, next) => {
+        if ((req.method ?? "GET").toUpperCase() !== "POST") {
+          next();
+          return;
+        }
+        try {
+          const chunks: Buffer[] = [];
+          for await (const chunk of req) chunks.push(Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk));
+          const body = JSON.parse(Buffer.concat(chunks).toString("utf8")) as {
+            text?: unknown;
+            sourceLang?: unknown;
+            targetLang?: unknown;
+          };
+          const { translateRequest } = (await server.ssrLoadModule("/server/api/translate.post.ts")) as {
+            translateRequest: (body: { text?: unknown; sourceLang?: unknown; targetLang?: unknown }) => Promise<{ text: string; detected?: string }>;
+          };
+          const result = await translateRequest(body);
+          res.statusCode = 200;
+          res.setHeader("content-type", "application/json; charset=utf-8");
+          res.end(JSON.stringify({ ok: true, ...result }));
+        } catch (error) {
+          res.statusCode = 502;
+          res.setHeader("content-type", "application/json; charset=utf-8");
+          res.end(JSON.stringify({ ok: false, error: error instanceof Error ? error.message : "ترجمه در دسترس نیست" }));
+        }
+      });
+    },
+  };
+}
+
 function authPopupPlugin(): Plugin {
   return {
     name: "app-builder:auth-popup",
@@ -160,6 +195,8 @@ export default defineConfig(({ command, isPreview }) => ({
   resolve: { tsconfigPaths: true },
   plugins: [
     pgliteBootstrapPlugin(),
+    // Keep the translation API available in the Vite preview as well as Nitro deploys.
+    devTranslateApiPlugin(),
     // Before tanstackStart so /auth/popup never falls through to the SPA.
     authPopupPlugin(),
     // Dev-only /__app-env, read by scripts/check-auth-invariant.mjs.
