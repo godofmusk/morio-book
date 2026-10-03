@@ -13,7 +13,19 @@ export const Route = createRootRoute({
       { title: APP_NAME },
       {
         name: "description",
-        content: "Morio Book؛ کتاب‌خوان PDF با ترجمه و پخش صوت متن",
+        content: "Morio Book؛ کتاب‌خوان PDF برای ترجمه و پخش صوت متن",
+      },
+      { property: "og:title", content: APP_NAME },
+      {
+        property: "og:description",
+        content: "Morio Book؛ کتاب‌خوان PDF برای ترجمه و پخش صوت متن",
+      },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
+      { name: "twitter:title", content: APP_NAME },
+      {
+        name: "twitter:description",
+        content: "Morio Book؛ کتاب‌خوان PDF برای ترجمه و پخش صوت متن",
       },
       { name: "application-name", content: APP_NAME },
       { name: "apple-mobile-web-app-title", content: APP_NAME },
