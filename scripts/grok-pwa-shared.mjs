@@ -304,14 +304,9 @@ export function resolveOgTitle(
   host = "",
   documentTitle = "",
 ) {
-  const fromSite = String(site.title ?? "").trim();
-  if (fromSite) return fromSite;
-  const fromDoc = String(documentTitle ?? "").trim();
-  if (fromDoc) return fromDoc;
-  const fromHost = appNameFromHost(host);
-  if (fromHost && fromHost !== DEFAULT_APP_NAME) return fromHost;
-  const fromArg = String(appName ?? "").trim();
-  return fromArg || DEFAULT_APP_NAME;
+  // Keep published share cards branded consistently; the deployment hostname
+  // must never replace the product name with an old project slug.
+  return DEFAULT_APP_NAME;
 }
 
 export function siteHasCustomCard(site = {}) {

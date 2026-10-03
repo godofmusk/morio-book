@@ -21,6 +21,7 @@ export const Route = createRootRoute({
         content: "Morio Book؛ کتاب‌خوان PDF برای ترجمه و پخش صوت متن",
       },
       { property: "og:type", content: "website" },
+      { property: "og:site_name", content: APP_NAME },
       { name: "twitter:card", content: "summary" },
       { name: "twitter:title", content: APP_NAME },
       {
