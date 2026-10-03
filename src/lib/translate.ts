@@ -10,13 +10,24 @@ type TranslateInput = {
 
 export async function translateText(input: TranslateInput): Promise<TranslateResult> {
   try {
-    const response = await fetch("/api/translate", {
-      method: "POST",
-      headers: { "content-type": "application/json" },
-      body: JSON.stringify(input),
+    const params = new URLSearchParams({
+      client: "gtx",
+      sl: input.sourceLang === "auto" ? "auto" : input.sourceLang,
+      tl: input.targetLang,
+      dt: "t",
+      q: input.text,
     });
-    const result = (await response.json()) as TranslateResult;
-    return response.ok ? result : { ok: false, error: result.ok ? "ترجمه در دسترس نیست" : result.error };
+    const response = await fetch(`https://translate.googleapis.com/translate_a/single?${params.toString()}`);
+    if (!response.ok) return { ok: false, error: "ترجمه در دسترس نیست" };
+
+    const payload = (await response.json()) as unknown[];
+    const segments = Array.isArray(payload[0]) ? payload[0] : [];
+    const text = segments
+      .map((segment) => (Array.isArray(segment) && typeof segment[0] === "string" ? segment[0] : ""))
+      .join("")
+      .trim();
+
+    return text ? { ok: true, text } : { ok: false, error: "ترجمه‌ای دریافت نشد" };
   } catch {
     return { ok: false, error: "خطا در ترجمه. دوباره تلاش کنید." };
   }
