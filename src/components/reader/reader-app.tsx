@@ -235,6 +235,7 @@ function ReaderShell() {
         text: payload.text,
         sourceLang,
         targetLang,
+        providers: translationProviders.filter((provider) => provider.enabled).map((provider) => provider.id),
       });
         if (!res.ok) {
           setError(res.error);
@@ -318,11 +319,12 @@ function ReaderShell() {
       if (!blocks.length) throw new Error("No text was detected on this page.");
       const paragraphTranslations: string[] = [];
       const results = await Promise.all(blocks.map(async (block, index) => {
-      const res = await translateText({
-        text: block.text,
-        sourceLang,
-        targetLang,
-      });
+        const res = await translateText({
+          text: block.text,
+          sourceLang,
+          targetLang,
+          providers: translationProviders.filter((provider) => provider.enabled).map((provider) => provider.id),
+        });
         if (!res.ok) throw new Error(res.error);
         paragraphTranslations[index] = res.text.replace(/[\r\n]+/g, " ").replace(/\s+/g, " ").trim();
         const parts = block.parts ?? [{ text: block.text, rect: block.rect }];
